@@ -46,24 +46,24 @@ def sort_files(file_to_sort) :
         if re.search("^[A-Z]", file_to_sort[-9]):
                 files.append("'%s'" % file_to_sort[-9:])
 
-def get_game_info_by_id(GameID) :
-        if GameID not in info:
-                info[GameID] = CUSA()
+def get_game_info_by_id(gameid_to_get) :
+        if gameid_to_get not in info:
+                info[gameid_to_get] = CUSA()
 
                 try:
                         buffer = io.BytesIO()
-                        ftp.cwd('/system_data/priv/appmeta/%s/' % GameID)
+                        ftp.cwd('/system_data/priv/appmeta/%s/' % gameid_to_get)
                         ftp.retrbinary("RETR param.sfo" , buffer.write)
                         buffer.seek(0)
                         sfo = SfoFile.from_reader(buffer)
-                        info[GameID].sfo = sfo
-                        info[GameID].size = ftp.size("/user/app/%s/app.pkg" % GameID)
-                        info[GameID].is_usable = True
+                        info[gameid_to_get].sfo = sfo
+                        info[gameid_to_get].size = ftp.size("/user/app/%s/app.pkg" % gameid_to_get)
+                        info[gameid_to_get].is_usable = True
                 except Exception as e:
-                        print("Error processing %s, ignorining..." % GameID)
+                        print("Error processing %s, ignorining..." % gameid_to_get)
                         print("type error: " + str(e))
 
-        return info[GameID]
+        return info[gameid_to_get]
 
 
 ftp = FTP()
@@ -117,13 +117,13 @@ print("Processing table: tbl_appinfo")
 cursor.execute("SELECT DISTINCT T.titleid FROM (SELECT titleid FROM %s) T WHERE T.titleid NOT IN (SELECT DISTINCT titleid FROM tbl_appinfo);" % (" UNION SELECT titleid FROM ".join(tbl_appbrowse)))
 missing_appinfo_cusa_id = cursor.fetchall()
 for tmp_cusa_id in missing_appinfo_cusa_id :
-        game_id = tmp_cusa_id[0]
-        print(" Processing GameID: %s... " % game_id, end='')
-        cusa = get_game_info_by_id(game_id)
+        current_game_id = tmp_cusa_id[0]
+        print(" Processing GameID: %s... " % current_game_id, end='')
+        cusa = get_game_info_by_id(current_game_id)
         if cusa.is_usable == True:
                 sql_items = appinfo.get_pseudo_appinfo(cusa.sfo, cusa.size)
                 for key, value in sql_items.items():
-                        cursor.execute("INSERT INTO tbl_appinfo (titleid, key, val) VALUES (?, ?, ?);", [game_id, key, value])
+                        cursor.execute("INSERT INTO tbl_appinfo (titleid, key, val) VALUES (?, ?, ?);", [current_game_id, key, value])
                 print("Completed")
         else :
                 print("Skipped")
