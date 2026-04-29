@@ -23,13 +23,15 @@ port = int(args.port) if int(args.port) is not None else 2121
 
 value_format = ""
 if args.fw == "5.05":
-        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757")"""
+        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2026-04-29 02:07:47.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2026-04-29 02:07:47.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2026-04-29 02:07:47.757")"""
 elif args.fw == "6.72":
-        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL)"""
+        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2026-04-29 02:07:47.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2026-04-29 02:07:47.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2026-04-29 02:07:47.757", "0", "0", "0", "0", "0", NULL)"""
+elif args.fw == "10.50":
+        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2026-04-29 02:07:47.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2026-04-29 02:07:47.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2026-04-29 02:07:47.757", "0", "0", "0", "0", "0", NULL, "0", NULL, NULL)"""
 elif args.fw == "11.00":
-        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL,"0",NULL,NULL,NULL)"""        
+        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2026-04-29 02:07:47.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2026-04-29 02:07:47.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2026-04-29 02:07:47.757", "0", "0", "0", "0", "0", NULL, "0", NULL, NULL, NULL)"""
 else:
-        value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL)"""
+        raise Exception("Please provide target firmware! Currently missing --fw xx.xx parameter")
 
 if not os.path.exists('tmp'):
         os.makedirs('tmp')
