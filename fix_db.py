@@ -19,15 +19,14 @@ args = parser.parse_args()
 app_db = "tmp/app.db"
 PS4_IP = args.PS4_IP
 
-port = 2121
-port = int(args.port)
+port = int(args.port) if int(args.port) is not None else 2121
 
 value_format = ""
-if(args.fw == "5.05"):
+if args.fw == "5.05":
         value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151", "5", "1", "gd", "0", "0", "0", "0", NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL, NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757")"""
-elif(args.fw == "6.72"):
+elif args.fw == "6.72":
         value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL)"""
-elif(args.fw == "11.00"):
+elif args.fw == "11.00":
         value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL,"0",NULL,NULL,NULL)"""        
 else:
         value_format = """("%s", "%s", "%s", "/user/appmeta/%s", "2018-07-27 15:06:46.822", "0", "0", "5", "1", "100", "0", "151","5", "1", "gd", "0", "0", "0", "0",NULL, NULL, NULL, "%d", "2018-07-27 15:06:46.802", "0", "game", NULL, "0", "0", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "0", NULL,NULL, NULL, NULL, NULL, "0", "0", NULL, "2018-07-27 15:06:46.757","0","0","0","0","0",NULL)"""
@@ -43,12 +42,12 @@ class CUSA :
 info = {}
 files = []
 
-def sort_files(file) :
-        if re.search("^[A-Z]", file[-9]):
-                files.append("'%s'" % file[-9:])
+def sort_files(file_to_sort) :
+        if re.search("^[A-Z]", file_to_sort[-9]):
+                files.append("'%s'" % file_to_sort[-9:])
 
 def get_game_info_by_id(GameID) :
-        if(GameID not in info) :
+        if GameID not in info:
                 info[GameID] = CUSA()
 
                 try:
@@ -70,7 +69,7 @@ def get_game_info_by_id(GameID) :
 ftp = FTP()
 ftp.connect(PS4_IP, port, timeout=30)
 ftp.login(user='username', passwd = 'password')
-if(len(files) == 0) :
+if len(files) == 0:
         ftp.cwd('/user/app/')
         ftp.dir(sort_files)
         print(files)
@@ -99,14 +98,14 @@ for tbl in tables :
                 GameID = tmp_GameID[0].replace("'", "")
                 print(" Processing GameID: %s... " % GameID, end='')
                 cusa = get_game_info_by_id(GameID)
-                if(cusa.is_usable == True) :
+                if cusa.is_usable == True:
                         sql_list.append(value_format
                                 % (cusa.sfo['TITLE_ID'], cusa.sfo['CONTENT_ID'], cusa.sfo['TITLE'], cusa.sfo['TITLE_ID'], cusa.size))
                         print("Completed %d" % cusa.size)
                 else :
                         print("Ignoring")
 
-        if(len(sql_list) > 0) :
+        if len(sql_list) > 0:
                 cursor.execute("INSERT INTO %s VALUES %s;" % (tbl[0], ', '.join(sql_list)))
 
 print('')
@@ -121,7 +120,7 @@ for tmp_cusa_id in missing_appinfo_cusa_id :
         game_id = tmp_cusa_id[0]
         print(" Processing GameID: %s... " % game_id, end='')
         cusa = get_game_info_by_id(game_id)
-        if(cusa.is_usable == True) :
+        if cusa.is_usable == True:
                 sql_items = appinfo.get_pseudo_appinfo(cusa.sfo, cusa.size)
                 for key, value in sql_items.items():
                         cursor.execute("INSERT INTO tbl_appinfo (titleid, key, val) VALUES (?, ?, ?);", [game_id, key, value])
